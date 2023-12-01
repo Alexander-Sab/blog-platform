@@ -1,0 +1,111 @@
+.content {
+  width: 1440px;
+  margin: 0 auto;
+  background-color: #EBEEF3;
+}
+
+.contentList { 
+    border-radius: 5px;
+    background-color:rgba(255, 255, 255, 1);
+    box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    margin: 0 auto;
+    margin-top: 26px;
+    
+}
+
+.contentList-PostHeader {
+    display: flex;
+    justify-content: space-between;
+}
+
+.contentList-PostHeader___content-title {
+    display: flex;   
+}
+
+.contentList-PostHeader___content-title-link {
+    text-decoration: none;
+    font-family: Inter UI;
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: rgba(24, 144, 255, 1);
+    margin-right: 12px;
+}
+
+.contentList-PostHeader___content-like {
+    display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.contentList-PostHeader___content-like-anticon {
+    
+}
+
+.contentList-PostHeader___content-tags-tag {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    cursor: pointer;
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 15px;
+    letter-spacing: 0em;
+    text-align: left;
+
+  }
+  
+  .contentList-PostHeader___content-tags-tag:hover {
+    background-color: #ccc;
+  }
+  
+  .contentList-PostHeader___content-tags-tag:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #0000ff;
+  }
+
+.contentList-PostHeader___sidebar-author {
+    width: 141px;
+    height: 46px;
+    display: flex;
+}
+
+.contentList-PostHeader___sidebar-author-info {
+    font-family: Inter UI;
+    font-size: 18px;
+    line-height: 28px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: rgba(0, 0, 0, 0.85);
+
+}
+.contentList-PostHeader___sidebar-author-info-date {
+    font-family: Inter UI;
+    font-size: 12px;
+    line-height: 22px;
+    letter-spacing: 0px;    
+    text-align: left;
+    color: rgba(0, 0, 0, 0.5);
+    margin-right: 12px;
+    white-space: nowrap;
+}
+
+.contentList-PostHeader___sidebar-avatar {
+  width: 46px;
+  height: 46px;
+  background-color: #F4F8FF;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 40px;
+  flex-shrink: 0;
+}
