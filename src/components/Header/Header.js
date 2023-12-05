@@ -1,26 +1,24 @@
 import clsx from 'clsx'
+import { Link } from 'react-router-dom'
 
 import classes from './Header.module.scss'
 
 export function Header() {
   return (
     <section className={clsx(classes.header)}>
-      <div className={clsx(classes['header-text'])}>Realworld Blog</div>
+      <Link to="/articles" className={clsx(classes['header-text'])}>
+        Realworld Blog
+      </Link>
       <div className="header-control">
-        <button
-          className={clsx(classes['header-control__buttons'])}
-          type="button"
-        >
+        <Link to="/signin" className={clsx(classes['header-control__buttons'])}>
           Sign In
-        </button>
-        <button
-          className={clsx(classes['header-control__buttons'])}
-          type="button"
-        >
+        </Link>
+        <Link to="/signup" className={clsx(classes['header-control__buttons'])}>
           Sign Up
-        </button>
+        </Link>
       </div>
     </section>
   )
 }
+
 export default Header

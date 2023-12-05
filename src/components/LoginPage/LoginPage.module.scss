@@ -1,0 +1,32 @@
+.loginPage {
+    background-color: #fff;
+    width: 386px;
+    padding: 48px 32px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin: 0 auto;
+    border-radius: 5px;
+    margin-top: 26px;
+}
+
+.loginPage-header {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 28px;
+    letter-spacing: 0em;
+    text-align: center;
+}
+
+.loginPage-Buttone {
+    width: 390px;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0em;
+    text-align: center;
+
+}

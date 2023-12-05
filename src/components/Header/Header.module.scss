@@ -15,7 +15,9 @@
     font-size: 18px;
     line-height: 28px;
     letter-spacing: 0em;
-    text-align: left;    
+    text-align: left;
+    text-decoration: none;
+
 }
 
 .header-control {
@@ -27,7 +29,7 @@
 .header-control__buttons {
     width: 109px; 
     height: 51px;
-    border: none;
+    
     background-color: rgba(255, 255, 255, 1);
     cursor: pointer;
     font-family: 'Inter', sans-serif;
@@ -40,7 +42,11 @@
     padding-top: 10px;
     padding-bottom: 10px;
     box-sizing: border-box;
-    
+    text-decoration: none;
+    position: relative;
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5714285714285714;
 }
 
 .header-control__buttons:hover {

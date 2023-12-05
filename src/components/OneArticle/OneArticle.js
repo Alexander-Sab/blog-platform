@@ -59,13 +59,15 @@ export function OneArticle() {
                 12
               </div>
             </div>
-            <span
-              className={clsx(
-                classes['contentList-PostHeader___content-tags-tag'],
-              )}
-            >
-              {articles.tagList}
-            </span>
+            {articles.tagList && (
+              <span
+                className={clsx(
+                  classes['contentList-PostHeader___content-tags-tag'],
+                )}
+              >
+                {articles.tagList}
+              </span>
+            )}
             <div
               className={clsx(
                 classes['contentList-PostHeader___content-description'],

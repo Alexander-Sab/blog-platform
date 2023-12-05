@@ -26,7 +26,9 @@ export function Сontent() {
     setLoading(true)
     dispatch(getPosts(currentPage))
       .then(() => {
-        setLoading(false)
+        setTimeout(() => {
+          setLoading(false)
+        }, 5000) // Задержка в 5 секунд
       })
       .catch((error) => {
         setErrorMessage(error.message)
@@ -35,7 +37,11 @@ export function Сontent() {
   }, [currentPage, dispatch])
 
   if (loading) {
-    return <Spin />
+    return (
+      <div className={clsx(classes.spin, classes.content)}>
+        <Spin />
+      </div>
+    )
   }
 
   if (errorMessage) {
