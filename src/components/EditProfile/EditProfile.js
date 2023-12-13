@@ -1,30 +1,51 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/jsx-one-expression-per-line */
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
 // eslint-disable-next-line object-curly-newline
-import { Form, Input, Button, Checkbox } from 'antd'
+import { Form, Input, Button } from 'antd'
 import { useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
 
-import { fetchCreateUser } from '../../store/blog'
+// import { useDispatch } from 'react-redux'
+import { fetchUpdateUserProfile } from '../../store/blog'
 
-import classes from './RegisterPage.module.scss'
+import classes from './EditProfile.module.scss'
 
-export function RegisterPage() {
+export function UserHat() {
   const dispatch = useDispatch()
+  const [form] = Form.useForm()
   const {
     formState: { errors, isSubmitting },
-    watch,
   } = useForm()
-
   const onSubmit = (data) => {
-    console.log('Form data:', data)
-    dispatch(fetchCreateUser(data))
+    dispatch(fetchUpdateUserProfile(data))
+  }
+  const user = useSelector((state) => state.blog.user)
+
+  useEffect(() => {
+    // Set form field values on component load
+    if (user) {
+      form.setFieldsValue({
+        username: user.username,
+        email: user.email,
+      })
+    }
+  }, [form, user])
+
+  if (!user) {
+    return null // Return null or another component if user data is not available
   }
 
   return (
     <section className={clsx(classes.UserForm)}>
       <h3 className={clsx(classes['UserForm-header'])}>Create new account</h3>
-      <Form onFinish={onSubmit} errors={errors} validateTrigger="onBlur">
+      <Form
+        form={form}
+        onFinish={onSubmit}
+        errors={errors}
+        validateTrigger="onBlur"
+      >
         <Form.Item
           name="username"
           label="Username"
@@ -62,7 +83,7 @@ export function RegisterPage() {
         </Form.Item>
         <Form.Item
           name="password"
-          label="Password"
+          label="New password "
           labelCol={{ span: 24 }}
           rules={[
             {
@@ -79,42 +100,20 @@ export function RegisterPage() {
             },
           ]}
         >
-          <Input.Password placeholder="Password" />
+          <Input.Password placeholder="New password" />
         </Form.Item>
         <Form.Item
-          name="repeatPassword"
-          label="Repeat Password"
+          name="image"
+          label="Avatar image"
           labelCol={{ span: 24 }}
           rules={[
             {
-              required: true,
-              message: 'Repeat password is required',
-            },
-            {
-              validate: (value) =>
-                // eslint-disable-next-line implicit-arrow-linebreak
-                value === watch('password') || 'Passwords do not match',
+              type: 'url',
+              message: 'Please enter a valid URL',
             },
           ]}
         >
-          <Input.Password placeholder="Password" />
-        </Form.Item>
-        <Form.Item
-          name="agreement"
-          valuePropName="checked"
-          validateStatus={errors.agreement ? 'error' : ''}
-          help={errors.agreement && errors.agreement.message}
-          rules={[
-            {
-              required: true,
-              message:
-                'You must agree to the processing of your personal information',
-            },
-          ]}
-        >
-          <Checkbox>
-            I agree to the processing of my personal information
-          </Checkbox>
+          <Input placeholder="Avatar image" />
         </Form.Item>
         <Form.Item>
           <Button
@@ -123,15 +122,12 @@ export function RegisterPage() {
             htmlType="submit"
             disabled={isSubmitting}
           >
-            Create
+            Save
           </Button>
         </Form.Item>
       </Form>
-      <p>
-        Already have an account? <a href="/signin">Sign In</a>
-      </p>
     </section>
   )
 }
 
-export default RegisterPage
+export default UserHat

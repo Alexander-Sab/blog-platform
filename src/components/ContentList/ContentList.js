@@ -2,6 +2,7 @@ import ReactMarkdown from 'react-markdown'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 
+import placeholderImage from './humanavatar.svg'
 import classes from './ContentList.module.scss'
 
 export function ContentList({ articles }) {
@@ -15,6 +16,10 @@ export function ContentList({ articles }) {
     })
 
     return formattedDate
+  }
+
+  const handleImageError = (e) => {
+    e.target.src = placeholderImage // Устанавливаем картинку-запаску в случае ошибки
   }
 
   return (
@@ -86,6 +91,7 @@ export function ContentList({ articles }) {
               )}
               src={articles.author.image}
               alt="avatar"
+              onError={handleImageError}
             />
           </div>
         </div>

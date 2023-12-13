@@ -9,7 +9,7 @@ export function Header() {
       <Link to="/articles" className={clsx(classes['header-text'])}>
         Realworld Blog
       </Link>
-      <div className="header-control">
+      <div className={clsx(classes['header-control'])}>
         <Link to="/signin" className={clsx(classes['header-control__buttons'])}>
           Sign In
         </Link>

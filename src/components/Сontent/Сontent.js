@@ -28,7 +28,7 @@ export function Сontent() {
       .then(() => {
         setTimeout(() => {
           setLoading(false)
-        }, 5000) // Задержка в 5 секунд
+        }, 1000) // Задержка в 5 секунд
       })
       .catch((error) => {
         setErrorMessage(error.message)
@@ -67,7 +67,7 @@ export function Сontent() {
       <Pagination
         className={clsx(classes.pagination)}
         current={currentPage}
-        total={totalPages * 5} // Умножайте на количество статей на странице
+        total={totalPages} // Умножайте на количество статей на странице
         onChange={handlePageChange}
       />
     </section>

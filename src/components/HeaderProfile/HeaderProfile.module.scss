@@ -1,0 +1,121 @@
+.header {
+    width: 1440px;
+    height: 80px;
+    background-color: rgba(255, 255, 255, 1);
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    align-items: center;
+    padding-left: 22px;
+    padding-right: 22px;
+}
+
+.header-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    line-height: 28px;
+    letter-spacing: 0em;
+    text-align: left;
+    text-decoration: none;
+
+}
+
+.header-actions {
+    width: 500px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-actions__Create-article {
+    width: 150px; 
+    height: 40px;
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(0, 0, 0, 0.75);
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    line-height: 28px;
+    letter-spacing: 0em;
+    text-align: left;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.85);
+    
+    box-sizing: border-box;
+    text-decoration: none;
+    position: relative;
+    display: inline-block;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    font-weight: 400;
+    line-height: 1.5714285714285714;
+}
+
+.header-actions__Create-article:hover {
+    border: 1px solid rgba(82, 196, 26, 1);
+    border-radius: 5px;
+    color: rgba(82, 196, 26, 1);
+    transform: scale(1);
+}
+
+.header-actions__profile {
+    width: 150px;
+    display: flex;
+    justify-content: space-between;
+    text-decoration: none;
+}
+.header-actions__profile-user {
+    display: flex;
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    line-height: 28px;
+    letter-spacing: 0em;
+    text-align: center;
+    text-decoration: none;
+    
+}
+
+.header-actions__profile-avatar {
+    width: 46px;
+    height: 46px;
+    
+    background-color: #F4F8FF;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 40px;
+    flex-shrink: 0;
+  }
+
+.header-actions__Log-Out {
+    width: 150px; 
+    height: 51px;
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(0, 0, 0, 0.75);
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    line-height: 28px;
+    letter-spacing: 0em;
+    text-align: left;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.85);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    box-sizing: border-box;
+    text-decoration: none;
+    position: relative;
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5714285714285714;
+}
+
+.header-actions__Log-Out:hover {
+    border: 1px solid #E10B27;
+    border-radius: 5px;
+    color: #E10B27;
+    transform: scale(1);
+}

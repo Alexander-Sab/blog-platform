@@ -1,5 +1,10 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable operator-linebreak */
+/* eslint-disable no-param-reassign */
+import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
+
+import getCookie from '../utils/getCookie'
 
 const API_ROOT_URL = 'https://blog.kata.academy/api/'
 
@@ -36,9 +41,87 @@ export const fetchCreateUser = createAsyncThunk(
       return rejectWithValue({
         status: err.response.status,
         statusText:
-          // eslint-disable-next-line operator-linebreak
           err?.response?.data?.errors?.message ||
           'Не верные данные. Проверьте заполнение полей!',
+      })
+    }
+  },
+)
+
+export const fetchLoginUser = createAsyncThunk(
+  'user/fetchLoginUser',
+  async ({ email, password }, { rejectWithValue }) =>
+    axios
+      .post(
+        `${API_ROOT_URL}users/login`,
+        {
+          user: {
+            email,
+            password,
+          },
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
+      .then((res) => {
+        console.log('res.data', res.data) // Выводим ответ в консоль
+        return res.data
+      })
+      .catch((err) => {
+        console.log('err.response', err.response)
+        return rejectWithValue({
+          status: err.response.status,
+          statusText:
+            err?.response?.data?.errors?.message ||
+            'Логин или пароль не верные',
+        })
+      }),
+)
+
+export const logoutUser = createAction('user/logoutUser')
+export const updateUserProfile = createAction('user/updateUserProfile')
+
+// ========================================================= fetchUpdateUserProfile
+
+export const fetchUpdateUserProfile = createAsyncThunk(
+  'user/fetchUpdateUserProfile',
+  // eslint-disable-next-line object-curly-newline
+  async (
+    // eslint-disable-next-line object-curly-newline
+    { username, email, password, image },
+    { rejectWithValue, dispatch },
+  ) => {
+    console.log('Incoming data', username, email, password, image)
+    const requestData = {
+      user: {
+        username,
+        email,
+        password,
+        image,
+      },
+    }
+    const token = getCookie('token')
+    console.log('Token:', token)
+    try {
+      const response = await axios.put(`${API_ROOT_URL}user`, requestData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${getCookie('token')}`,
+        },
+      })
+      console.log('UserProfile', response.data)
+
+      // Обновляем данные пользователя в Redux
+      dispatch(updateUserProfile(response.data.user))
+      return response.data
+    } catch (err) {
+      console.log('Error:', err)
+      return rejectWithValue({
+        status: err.response.status,
+        statusText:
+          err?.response?.data?.errors?.message ||
+          'Данные не изменились. Такой пользователь уже существует!',
       })
     }
   },
@@ -49,10 +132,12 @@ const initialState = {
   page: 1,
   totalPages: 1,
   currentPost: {},
-  user: {},
+  user: JSON.parse(localStorage.getItem('user')) || null,
+  image: '',
   authorized: true,
   loading: true,
   error: '',
+  loggedIn: localStorage.getItem('loggedIn') === 'true',
 }
 
 const blog = createSlice({
@@ -60,34 +145,66 @@ const blog = createSlice({
   initialState,
   reducers: {
     clearPost: (state) => ({ ...state, currentPost: {} }),
+    logoutUser: (state) => {
+      localStorage.removeItem('loggedIn')
+      localStorage.removeItem('user')
+      return { ...state, loggedIn: false, user: null }
+    },
+    updateUserProfile: (state, action) => {
+      state.user = action.payload
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(getPosts.fulfilled, (state, action) => {
-      const { articles, articlesCount } = action.payload
-      const parsedTotalPages = Math.ceil(articlesCount / 5)
-      return {
-        ...state,
-        posts: articles,
-        totalPages: parsedTotalPages,
-        loading: false,
-      }
-    })
-    builder.addCase(getPosts.rejected, (state, action) => {
-      // eslint-disable-next-line no-param-reassign
-      state.error = action.error.message
-      // eslint-disable-next-line no-param-reassign
-      state.loading = false
-    })
-    // eslint-disable-next-line no-unused-vars
-    builder.addCase(fetchCreateUser.fulfilled, (state, action) => {
-      // Обработка успешного ответа
-      console.log('Запрос успешно выполнен')
-    })
-    // eslint-disable-next-line no-unused-vars
-    builder.addCase(fetchCreateUser.rejected, (state, action) => {
-      // Обработка ошибки
-      console.log('Ошибка при выполнении запроса')
-    })
+    builder
+      .addCase(getPosts.fulfilled, (state, action) => {
+        const { articles, articlesCount } = action.payload
+        const parsedTotalPages = Math.ceil(articlesCount / 5)
+        return {
+          ...state,
+          posts: articles,
+          totalPages: parsedTotalPages,
+          loading: false,
+        }
+      })
+      .addCase(getPosts.rejected, (state, action) => {
+        state.error = action.error.message
+        state.loading = false
+      })
+      .addCase(fetchLoginUser.fulfilled, (state, action) => {
+        console.log('Пользователь залогинился')
+        localStorage.setItem('loggedIn', 'true')
+        localStorage.setItem('user', JSON.stringify(action.payload))
+        document.cookie = `token=${action.payload.user.token}`
+        const formattedUser = {
+          ...action.payload,
+          username: action.payload.username
+            ? action.payload.username.charAt(0).toUpperCase() +
+              action.payload.username.slice(1)
+            : '',
+        }
+        state.loggedIn = true
+        state.user = formattedUser
+        state.user.image = action.payload.user.image
+        state.user = action.payload.user
+      })
+      .addCase(fetchCreateUser.rejected, (state) => {
+        console.log('Ошибка при выполнении запроса')
+        state.loggedIn = false
+        state.user = {}
+      })
+      .addCase(logoutUser, (state) => {
+        localStorage.removeItem('loggedIn')
+        localStorage.removeItem('user')
+        return { ...state, loggedIn: false, user: {} }
+      })
+      .addCase(fetchUpdateUserProfile.fulfilled, (state, action) => {
+        console.log('Профиль пользователя обновлен')
+        console.log('action.payload:', action.payload)
+        localStorage.setItem('user', JSON.stringify(action.payload.user))
+        return {
+          ...state,
+        }
+      })
   },
 })
 

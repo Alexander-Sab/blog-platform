@@ -1,67 +1,74 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import clsx from 'clsx'
+import React, { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { Form, Input, Button } from 'antd'
 import { useForm } from 'react-hook-form'
+
+import { fetchLoginUser } from '../../store/blog'
 
 import classes from './LoginPage.module.scss'
 
 export function LoginPage() {
+  const loggedIn = useSelector((state) => state.blog.loggedIn)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (loggedIn) {
+      navigate('/articles')
+    }
+  }, [loggedIn, navigate])
+
+  const dispatch = useDispatch()
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm()
   const onFinish = (values) => {
-    // Handle form submission and process form data
     console.log('Form values:', values)
+    dispatch(fetchLoginUser(values))
   }
   return (
     <section className={clsx(classes.loginPage)}>
       <h3 className={clsx(classes['loginPage-header'])}> Sign In</h3>
-      <Form onFinish={handleSubmit(onFinish)}>
+      <Form onFinish={onFinish} errors={errors} validateTrigger="onBlur">
         <Form.Item
           name="email"
           label="Email address"
           labelCol={{ span: 24 }}
-          validateStatus={errors.email ? 'error' : ''}
-          help={errors.email && errors.email.message}
+          rules={[
+            {
+              required: true,
+              message: 'Email address is required',
+            },
+            {
+              pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+              message: 'Invalid email address',
+            },
+          ]}
         >
-          <Input
-            placeholder="Email address"
-            id="emailInput"
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...register('email', {
-              required: 'Email address is required',
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                message: 'Invalid email address',
-              },
-            })}
-          />
+          <Input placeholder="Email address" />
         </Form.Item>
         <Form.Item
           name="password"
           label="Password"
           labelCol={{ span: 24 }}
-          validateStatus={errors.password ? 'error' : ''}
-          help={errors.password && errors.password.message}
+          rules={[
+            {
+              required: true,
+              message: 'Password is required',
+            },
+            {
+              min: 6,
+              message: 'Password must be at least 6 characters long',
+            },
+            {
+              max: 40,
+              message: 'Password must not exceed 40 characters',
+            },
+          ]}
         >
-          <Input.Password
-            placeholder="Password"
-            id="passwordInput"
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...register('Password', {
-              required: 'Password is required',
-              minLength: {
-                value: 6,
-                message: 'Password must be at least 6 characters long',
-              },
-              maxLength: {
-                value: 40,
-                message: 'Password must not exceed 40 characters',
-              },
-            })}
-          />
+          <Input.Password placeholder="Password" />
         </Form.Item>
 
         <Form.Item>
@@ -69,8 +76,9 @@ export function LoginPage() {
             className={clsx(classes['loginPage-Buttone'])}
             type="primary"
             htmlType="submit"
+            disabled={isSubmitting}
           >
-            Create
+            Login
           </Button>
         </Form.Item>
       </Form>
