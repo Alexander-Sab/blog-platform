@@ -1,9 +1,10 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import clsx from 'clsx'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { Form, Input, Button } from 'antd'
+// eslint-disable-next-line object-curly-newline
+import { Form, Input, Button, Alert } from 'antd'
 import { useForm } from 'react-hook-form'
 
 import { fetchLoginUser } from '../../store/blog'
@@ -12,7 +13,11 @@ import classes from './LoginPage.module.scss'
 
 export function LoginPage() {
   const loggedIn = useSelector((state) => state.blog.loggedIn)
+  const loginError = useSelector((state) => state.blog.error)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  console.log('loginError', loginError)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     if (loggedIn) {
@@ -20,17 +25,32 @@ export function LoginPage() {
     }
   }, [loggedIn, navigate])
 
-  const dispatch = useDispatch()
+  useEffect(() => {
+    console.log('visible:', visible)
+    console.log('loginError:', loginError)
+    setVisible(true)
+    // Скрыть уведомление через 3 секунды после отображения
+    const timer = setTimeout(() => {
+      setVisible(false)
+    }, 3000)
+    return () => clearTimeout(timer)
+  }, [loginError])
+
   const {
     formState: { errors, isSubmitting },
   } = useForm()
+
   const onFinish = (values) => {
     console.log('Form values:', values)
     dispatch(fetchLoginUser(values))
   }
+
   return (
     <section className={clsx(classes.loginPage)}>
       <h3 className={clsx(classes['loginPage-header'])}> Sign In</h3>
+      {visible && loginError && (
+        <Alert message="Invalid logs or password!" type="error" showIcon />
+      )}
       <Form onFinish={onFinish} errors={errors} validateTrigger="onBlur">
         <Form.Item
           name="email"
@@ -70,7 +90,6 @@ export function LoginPage() {
         >
           <Input.Password placeholder="Password" />
         </Form.Item>
-
         <Form.Item>
           <Button
             className={clsx(classes['loginPage-Buttone'])}

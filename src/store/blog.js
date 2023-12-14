@@ -48,11 +48,22 @@ export const fetchCreateUser = createAsyncThunk(
   },
 )
 
+export const loginUserFailed = createAction(
+  'user/loginUserFailed',
+  (error) => ({
+    payload: {
+      status: error.response?.status || 500,
+      statusText: error.response?.data?.errors?.message || 'Неизвестная ошибка',
+    },
+  }),
+)
+
+// В вашей thunk-функции
 export const fetchLoginUser = createAsyncThunk(
   'user/fetchLoginUser',
-  async ({ email, password }, { rejectWithValue }) =>
-    axios
-      .post(
+  async ({ email, password }, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await axios.post(
         `${API_ROOT_URL}users/login`,
         {
           user: {
@@ -64,19 +75,18 @@ export const fetchLoginUser = createAsyncThunk(
           headers: { 'Content-Type': 'application/json' },
         },
       )
-      .then((res) => {
-        console.log('res.data', res.data) // Выводим ответ в консоль
-        return res.data
+      console.log('res.data', response.data)
+      return response.data
+    } catch (err) {
+      console.log('err.response', err.response)
+      dispatch(loginUserFailed(err))
+      return rejectWithValue({
+        status: err.response?.status || 500,
+        statusText:
+          err?.response?.data?.errors?.message || 'Логин или пароль не верные',
       })
-      .catch((err) => {
-        console.log('err.response', err.response)
-        return rejectWithValue({
-          status: err.response.status,
-          statusText:
-            err?.response?.data?.errors?.message ||
-            'Логин или пароль не верные',
-        })
-      }),
+    }
+  },
 )
 
 export const logoutUser = createAction('user/logoutUser')
@@ -204,6 +214,10 @@ const blog = createSlice({
         return {
           ...state,
         }
+      })
+      .addCase(loginUserFailed, (state, action) => {
+        state.error = action.payload.statusText // Обновите ошибку в состоянии
+        state.loading = false
       })
   },
 })

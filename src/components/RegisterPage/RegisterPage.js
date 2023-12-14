@@ -1,15 +1,26 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import clsx from 'clsx'
+import React, { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 // eslint-disable-next-line object-curly-newline
 import { Form, Input, Button, Checkbox } from 'antd'
 import { useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
-import { fetchCreateUser } from '../../store/blog'
+import { fetchCreateUser, fetchLoginUser } from '../../store/blog'
 
 import classes from './RegisterPage.module.scss'
 
 export function RegisterPage() {
+  const loggedIn = useSelector((state) => state.blog.loggedIn)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (loggedIn) {
+      navigate('/articles')
+    }
+  }, [loggedIn, navigate])
+
   const dispatch = useDispatch()
   const {
     formState: { errors, isSubmitting },
@@ -19,6 +30,13 @@ export function RegisterPage() {
   const onSubmit = (data) => {
     console.log('Form data:', data)
     dispatch(fetchCreateUser(data))
+      .then(() => {
+        dispatch(fetchLoginUser(data))
+        navigate('/articles')
+      })
+      .catch((error) => {
+        console.log('Registration error:', error)
+      })
   }
 
   return (
