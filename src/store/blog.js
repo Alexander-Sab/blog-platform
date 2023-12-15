@@ -53,7 +53,8 @@ export const loginUserFailed = createAction(
   (error) => ({
     payload: {
       status: error.response?.status || 500,
-      statusText: error.response?.data?.errors?.message || 'Неизвестная ошибка',
+      statusText:
+        error.response?.data?.errors?.message || 'Логин или пароль не верные',
     },
   }),
 )
@@ -143,7 +144,6 @@ const initialState = {
   totalPages: 1,
   currentPost: {},
   user: JSON.parse(localStorage.getItem('user')) || null,
-  image: '',
   authorized: true,
   loading: true,
   error: '',
@@ -186,7 +186,7 @@ const blog = createSlice({
         localStorage.setItem('user', JSON.stringify(action.payload))
         document.cookie = `token=${action.payload.user.token}`
         const formattedUser = {
-          ...action.payload,
+          ...action.payload.user,
           username: action.payload.username
             ? action.payload.username.charAt(0).toUpperCase() +
               action.payload.username.slice(1)
@@ -194,7 +194,7 @@ const blog = createSlice({
         }
         state.loggedIn = true
         state.user = formattedUser
-        state.user.image = action.payload.user.image
+
         state.user = action.payload.user
       })
       .addCase(fetchCreateUser.rejected, (state) => {
@@ -211,8 +211,11 @@ const blog = createSlice({
         console.log('Профиль пользователя обновлен')
         console.log('action.payload:', action.payload)
         localStorage.setItem('user', JSON.stringify(action.payload.user))
+        // Обновляем данные пользователя в Redux
+
         return {
           ...state,
+          user: action.payload.user, // Обновление данных в Redux
         }
       })
       .addCase(loginUserFailed, (state, action) => {

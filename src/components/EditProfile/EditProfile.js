@@ -21,7 +21,7 @@ export function UserHat() {
   const onSubmit = (data) => {
     dispatch(fetchUpdateUserProfile(data))
   }
-  const user = useSelector((state) => state.blog.user)
+  const user = useSelector((state) => state.blog.user?.user || state.blog.user)
 
   useEffect(() => {
     // Set form field values on component load

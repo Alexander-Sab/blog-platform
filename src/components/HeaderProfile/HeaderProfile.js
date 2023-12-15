@@ -1,8 +1,10 @@
 import clsx from 'clsx'
+import React, { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
-import { logoutUser } from '../../store/blog'
+import { logoutUser, updateUserProfile } from '../../store/blog'
+import placeholderImage from '../ContentList/humanavatar.svg'
 
 import classes from './HeaderProfile.module.scss'
 
@@ -13,6 +15,18 @@ export function HeaderProfile() {
   console.log('userProfile', userProfile)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    // Переносим обновление данных пользователя в хук useEffect
+    if (userProfile) {
+      // Используем dispatch напрямую для обновления данных пользователя
+      dispatch(updateUserProfile(userProfile))
+    }
+  }, [dispatch, userProfile])
+
+  const handleImageError = (e) => {
+    e.target.src = placeholderImage // Устанавливаем картинку-запаску в случае ошибки
+  }
   const handleLogout = () => {
     dispatch(logoutUser())
     navigate('/')
@@ -21,6 +35,8 @@ export function HeaderProfile() {
   if (!userProfile) {
     return null // Возвращаем null или другой компонент, если данные пользователя не доступны
   }
+
+  const avatarSrc = userProfile.image || placeholderImage
 
   return (
     <section className={clsx(classes.header)}>
@@ -43,8 +59,9 @@ export function HeaderProfile() {
           </div>
           <img
             className={clsx(classes['header-actions__profile-avatar'])}
-            src={userProfile.image}
+            src={avatarSrc}
             alt="avatar"
+            onError={handleImageError}
           />
         </Link>
         <Link
