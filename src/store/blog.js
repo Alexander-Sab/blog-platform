@@ -137,7 +137,124 @@ export const fetchUpdateUserProfile = createAsyncThunk(
     }
   },
 )
+// ++++++++++ новая статья
+export const createArticle = createAsyncThunk(
+  'blog/createArticle',
+  async (articleInfo) => {
+    const { data } = articleInfo
+    const token = getCookie('token')
 
+    const option = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify({
+        article: {
+          title: data.title,
+          description: data.description,
+          body: data.body,
+          tagList: data.tagList,
+        },
+      }),
+    }
+
+    const response = await fetch(
+      'https://blog.kata.academy/api/articles',
+      option,
+    )
+    const body = await response.json()
+
+    console.log(body)
+
+    return body
+  },
+)
+export const editArticle = createAsyncThunk(
+  'blog/editArticle',
+  async (articleInfo) => {
+    const { data, slug } = articleInfo
+    const token = getCookie('token')
+
+    const option = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify({
+        article: {
+          title: data.title,
+          description: data.description,
+          body: data.body,
+          tagList: data.tagList,
+        },
+      }),
+    }
+
+    const response = await fetch(
+      `https://blog.kata.academy/api/articles/${slug}`,
+      option,
+    )
+    const body = await response.json()
+
+    console.log(body)
+
+    return body
+  },
+)
+export const fetchPostData = createAsyncThunk(
+  'blog/fetchPostData',
+  async (pageInfo) => {
+    let { token } = pageInfo
+    const { currentPage } = pageInfo
+    let option = null
+    if (sessionStorage.getItem('token')) {
+      token = sessionStorage.getItem('token')
+    }
+    if (token) {
+      option = {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      }
+    }
+    const response = await fetch(
+      `https://blog.kata.academy/api/articles?offset=${currentPage * 20 - 20}`,
+      option,
+    )
+    const data = await response.json()
+    console.log(data)
+    return data
+  },
+)
+//  удаление статьи ++++++++++++++++++++++++++++++++
+
+export const deleteArticle = createAsyncThunk(
+  'blog/deleteArticle',
+  async (articleInfo) => {
+    const { token, slug } = articleInfo
+
+    const option = {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    }
+
+    const response = await fetch(
+      `https://blog.kata.academy/api/articles/${slug}`,
+      option,
+    )
+    const data = await response.json()
+
+    console.log(data)
+
+    return data
+  },
+)
+// +++++++++++++++++++++++++++++++++++++++++++++++++
 const initialState = {
   posts: [],
   page: 1,
@@ -155,6 +272,9 @@ const blog = createSlice({
   initialState,
   reducers: {
     clearPost: (state) => ({ ...state, currentPost: {} }),
+    clearCurrentArticle: (state) => {
+      state.currentArticle = {}
+    },
     logoutUser: (state) => {
       localStorage.removeItem('loggedIn')
       localStorage.removeItem('user')
@@ -225,6 +345,6 @@ const blog = createSlice({
   },
 })
 
-export const { clearPost } = blog.actions
+export const { clearPost, clearCurrentArticle } = blog.actions
 
 export default blog.reducer

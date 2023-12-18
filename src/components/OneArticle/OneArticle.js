@@ -1,15 +1,23 @@
 import clsx from 'clsx'
-import { useParams } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { Popconfirm } from 'antd'
 
+import { deleteArticle } from '../../store/blog'
 import classes from '../ContentList/ContentList.module.scss'
 
 export function OneArticle() {
   const { slug } = useParams()
   const oneArticle = useSelector((state) => state.blog.posts)
+  const loggedIn = useSelector((state) => state.blog.loggedIn)
+  const currentUser = useSelector((state) => state.blog.user)
+  const token = useSelector((state) => state.blog.user.token)
   const articles = oneArticle.find((item) => item.slug === slug)
-  if (!articles) {
-    return <div>Статья не найдена</div>
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  if (!articles || !articles.slug) {
+    navigate.push('/articles') // Перенаправляем пользователя на страницу /articles
+    return null // Возвращаем null, так как компонент будет перенаправлен
   }
 
   const author = articles.author || {} // Добавляем пустой объект, если author не определен
@@ -24,6 +32,10 @@ export function OneArticle() {
     })
 
     return formattedDate
+  }
+
+  const handleDelete = () => {
+    dispatch(deleteArticle({ slug: articles.slug, token }))
   }
 
   return (
@@ -59,7 +71,7 @@ export function OneArticle() {
                 12
               </div>
             </div>
-            {articles.tagList && (
+            {articles.tagList && articles.tagList.length > 0 && (
               <span
                 className={clsx(
                   classes['contentList-PostHeader___content-tags-tag'],
@@ -74,6 +86,11 @@ export function OneArticle() {
               )}
             >
               {articles.description}
+            </div>
+            <div
+              className={clsx(classes['contentList-PostHeader___content-body'])}
+            >
+              {articles.body}
             </div>
           </div>
           <div className={clsx(classes['contentList-PostHeader___sidebar'])}>
@@ -107,6 +124,36 @@ export function OneArticle() {
                 alt="avatar"
               />
             </div>
+            {loggedIn && currentUser.username === author.username && (
+              <div
+                className={clsx(
+                  classes['contentList-PostHeader___sidebar-buttones'],
+                )}
+              >
+                <Popconfirm onConfirm={handleDelete}>
+                  <button
+                    type="button"
+                    className={clsx(
+                      classes[
+                        'contentList-PostHeader___sidebar-buttones-delete'
+                      ],
+                    )}
+                  >
+                    Delete
+                  </button>
+                </Popconfirm>
+                <Link to="/new-article">
+                  <button
+                    type="button"
+                    className={clsx(
+                      classes['contentList-PostHeader___sidebar-buttones-edit'],
+                    )}
+                  >
+                    Edit
+                  </button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

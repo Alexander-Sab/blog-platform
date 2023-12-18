@@ -15,6 +15,8 @@ import RegisterPage from '../RegisterPage'
 import LoginPage from '../LoginPage'
 import EditProfile from '../EditProfile'
 import HeaderProfile from '../HeaderProfile'
+import NewArticle from '../NewArticle'
+import EditArticle from '../EditArticle'
 
 import classes from './App.module.scss'
 
@@ -23,12 +25,13 @@ export function App() {
     const location = useLocation()
     const isEditProfilePage = location.pathname === '/profile'
     const isArticlesPage = location.pathname.startsWith('/articles')
+    const isCreateArticlePage = location.pathname === '/new-article'
     const loggedIn = useSelector((state) => state.blog.loggedIn)
 
     if (loggedIn && isEditProfilePage) {
       return <HeaderProfile />
     }
-    if (loggedIn && isArticlesPage) {
+    if (loggedIn && (isArticlesPage || isCreateArticlePage)) {
       return <HeaderProfile />
     }
     return <Header />
@@ -44,6 +47,8 @@ export function App() {
           <Route path="/signup" element={<RegisterPage />} />
           <Route path="/signin" element={<LoginPage />} />
           <Route path="/profile" element={<EditProfile />} />
+          <Route path="/new-article" element={<NewArticle />} />
+          <Route path="/articles/:slug/edit" element={<EditArticle />} />
         </Routes>
       </div>
     </Router>

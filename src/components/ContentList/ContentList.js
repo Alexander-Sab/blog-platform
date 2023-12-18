@@ -50,7 +50,7 @@ export function ContentList({ articles }) {
               12
             </div>
           </div>
-          {articles.tagList && (
+          {articles.tagList && articles.tagList.length > 0 && (
             <span
               className={clsx(
                 classes['contentList-PostHeader___content-tags-tag'],

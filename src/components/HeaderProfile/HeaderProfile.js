@@ -45,7 +45,7 @@ export function HeaderProfile() {
       </Link>
       <div className={clsx(classes['header-actions'])}>
         <Link
-          to="/profile"
+          to="/new-article"
           className={clsx(classes['header-actions__Create-article'])}
         >
           Create article
