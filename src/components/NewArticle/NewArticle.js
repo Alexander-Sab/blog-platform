@@ -58,7 +58,7 @@ export function NewArticle() {
         dispatch(fetchPostData(currentPage))
       }
       reset()
-      navigate('/')
+      navigate('/articles')
     } catch (err) {
       throw new Error(err.message)
     }

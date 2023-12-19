@@ -1,23 +1,37 @@
 import clsx from 'clsx'
+import React, { useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { Popconfirm } from 'antd'
 
-import { deleteArticle } from '../../store/blog'
+import { deleteArticle, clearCurrentArticle, getPosts } from '../../store/blog'
 import classes from '../ContentList/ContentList.module.scss'
 
 export function OneArticle() {
   const { slug } = useParams()
   const oneArticle = useSelector((state) => state.blog.posts)
   const loggedIn = useSelector((state) => state.blog.loggedIn)
-  const currentUser = useSelector((state) => state.blog.user)
-  const token = useSelector((state) => state.blog.user.token)
+  const currentUser = useSelector(
+    (state) => state.blog.user?.user || state.blog.user,
+  )
+  const token = useSelector(
+    (state) => state.blog.user.token || state.blog.user?.user.token,
+  )
+  console.log(
+    'Redux state:',
+    useSelector((state) => state.blog),
+  ) // Логируйте весь объект состояния
+  console.log('token', token)
+
   const articles = oneArticle.find((item) => item.slug === slug)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    dispatch(getPosts(slug))
+  }, [dispatch, slug])
   if (!articles || !articles.slug) {
-    navigate.push('/articles') // Перенаправляем пользователя на страницу /articles
-    return null // Возвращаем null, так как компонент будет перенаправлен
+    return <div>Статья не найдена</div>
   }
 
   const author = articles.author || {} // Добавляем пустой объект, если author не определен
@@ -36,6 +50,8 @@ export function OneArticle() {
 
   const handleDelete = () => {
     dispatch(deleteArticle({ slug: articles.slug, token }))
+    dispatch(clearCurrentArticle())
+    navigate('/articles')
   }
 
   return (

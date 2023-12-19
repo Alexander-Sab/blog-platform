@@ -40,7 +40,7 @@ export function HeaderProfile() {
 
   return (
     <section className={clsx(classes.header)}>
-      <Link to="/" className={clsx(classes['header-text'])}>
+      <Link to="/articles" className={clsx(classes['header-text'])}>
         Realworld Blog
       </Link>
       <div className={clsx(classes['header-actions'])}>

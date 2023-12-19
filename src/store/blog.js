@@ -10,9 +10,7 @@ const API_ROOT_URL = 'https://blog.kata.academy/api/'
 
 export const getPosts = createAsyncThunk('blog/getPosts', async (page) => {
   try {
-    const response = await axios.get(
-      `${API_ROOT_URL}articles?page=${page}&limit=5`,
-    )
+    const response = await axios.get(`${API_ROOT_URL}articles?page=${page}`)
     return response.data
   } catch (error) {
     throw new Error('Something goes wrong')
@@ -254,6 +252,7 @@ export const deleteArticle = createAsyncThunk(
     return data
   },
 )
+
 // +++++++++++++++++++++++++++++++++++++++++++++++++
 const initialState = {
   posts: [],
@@ -278,6 +277,7 @@ const blog = createSlice({
     logoutUser: (state) => {
       localStorage.removeItem('loggedIn')
       localStorage.removeItem('user')
+      document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
       return { ...state, loggedIn: false, user: null }
     },
     updateUserProfile: (state, action) => {
@@ -325,6 +325,8 @@ const blog = createSlice({
       .addCase(logoutUser, (state) => {
         localStorage.removeItem('loggedIn')
         localStorage.removeItem('user')
+        document.cookie =
+          'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
         return { ...state, loggedIn: false, user: {} }
       })
       .addCase(fetchUpdateUserProfile.fulfilled, (state, action) => {
