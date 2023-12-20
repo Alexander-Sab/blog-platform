@@ -17,11 +17,6 @@ export function OneArticle() {
   const token = useSelector(
     (state) => state.blog.user.token || state.blog.user?.user.token,
   )
-  console.log(
-    'Redux state:',
-    useSelector((state) => state.blog),
-  ) // Логируйте весь объект состояния
-  console.log('token', token)
 
   const articles = oneArticle.find((item) => item.slug === slug)
   const dispatch = useDispatch()
@@ -158,7 +153,7 @@ export function OneArticle() {
                     Delete
                   </button>
                 </Popconfirm>
-                <Link to="/new-article">
+                <Link to={`/articles/${articles.slug}/edit`}>
                   <button
                     type="button"
                     className={clsx(
