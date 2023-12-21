@@ -195,6 +195,7 @@ export const editArticle = createAsyncThunk(
       `https://blog.kata.academy/api/articles/${slug}`,
       option,
     )
+
     const body = await response.json()
 
     console.log(body)
@@ -265,7 +266,6 @@ const initialState = {
   error: '',
   loggedIn: localStorage.getItem('loggedIn') === 'true',
 }
-
 const blog = createSlice({
   name: 'blog',
   initialState,

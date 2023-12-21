@@ -1,18 +1,20 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable function-paren-newline */
 /* eslint-disable implicit-arrow-linebreak */
+
 import clsx from 'clsx'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useEffect } from 'react'
 
-import { editArticle } from '../../store/blog'
+import { editArticle, getPosts } from '../../store/blog'
 import classes from '../NewArticle/NewArticle.module.scss'
 
 export function EditArticle() {
   const { slug } = useParams()
-  const articles = useSelector((state) => state.blog?.posts || state.blog.posts)
-  console.log('articles', articles)
+  const articles = useSelector((state) => state.blog.posts)
+  const article = articles.find((item) => item.slug === slug)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const {
@@ -20,13 +22,13 @@ export function EditArticle() {
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm({
-    defaultValues: {
-      title: articles.title,
-      description: articles.description,
-      body: articles.body,
-    },
-  })
+  } = useForm()
+
+  useEffect(() => {
+    if (!articles.length) {
+      dispatch(getPosts())
+    }
+  }, [dispatch, articles.length])
 
   const submitForm = (data) => {
     dispatch(editArticle({ slug, data }))
@@ -37,6 +39,10 @@ export function EditArticle() {
     control,
     name: 'tagList',
   })
+
+  if (!article) {
+    return <div>Loading...</div> // Отображаем загрузку или другой компонент ожидания
+  }
 
   return (
     <div className={clsx(classes['article-form-container'])}>
@@ -63,6 +69,7 @@ export function EditArticle() {
               name="title"
               placeholder="Title"
               {...register('title')}
+              defaultValue={article.title || ''} // Добавляем defaultValue с проверкой на существование article.title
             />
           </label>
           {errors.title && (
@@ -85,6 +92,7 @@ export function EditArticle() {
               {...register('description')}
               name="description"
               placeholder="Description"
+              defaultValue={article.description || ''} // Добавляем defaultValue с проверкой на существование article.description
             />
           </label>
           {errors.description && (
@@ -105,6 +113,7 @@ export function EditArticle() {
               {...register('body')}
               name="body"
               placeholder="Text"
+              defaultValue={article.body || ''} // Добавляем defaultValue с проверкой на существование article.body
             />
           </label>
           {errors.body && (
