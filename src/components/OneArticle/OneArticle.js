@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Popconfirm } from 'antd'
 
 import { deleteArticle, clearCurrentArticle, getPosts } from '../../store/blog'
+import LikeButton from '../LikeButton'
 import classes from '../ContentList/ContentList.module.scss'
 
 export function OneArticle() {
@@ -77,9 +78,8 @@ export function OneArticle() {
                     classes['contentList-PostHeader___content-like-anticon'],
                   )}
                 >
-                  ❤️
+                  <LikeButton article={articles} />
                 </span>
-                12
               </div>
             </div>
             {articles.tagList && articles.tagList.length > 0 && (

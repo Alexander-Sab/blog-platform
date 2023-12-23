@@ -23,7 +23,7 @@
   },
   "plugins": ["react", "prettier", "import"],
   "rules": {
-    "no-undefined": "off",
+    "no-undefined": "off", // Добавленное правило
     "prettier/prettier": "error",
     "linebreak-style": [0, "unix"],
     "quotes": ["error", "single"],
