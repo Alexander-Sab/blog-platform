@@ -253,6 +253,86 @@ export const deleteArticle = createAsyncThunk(
     return data
   },
 )
+// лайки
+
+// поставить лайк
+
+export const favoriteArticle = createAsyncThunk(
+  'blog/favoriteArticle',
+  async (articleInfo) => {
+    const { slug } = articleInfo
+    const token = getCookie('token')
+
+    try {
+      const response = await axios.post(
+        `${API_ROOT_URL}articles/${slug}/favorite`,
+        null,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      )
+
+      const { data } = response
+
+      // Если data содержит свойство article, то возвращаем его
+      if (data.article) {
+        console.log('Успешный ответ ЛАЙК:', response.status, data)
+        console.log(data.article)
+        return data.article
+      }
+
+      // В противном случае возвращаем весь объект data
+      console.log('Успешный ответ ЛАЙК:', response.status, data)
+      console.log(data)
+      return data
+    } catch (error) {
+      // Обрабатываем ошибку
+      console.error('Ошибка запроса ЛАЙК:', error)
+      throw error
+    }
+  },
+)
+// удалить лайк
+export const unfavoriteArticle = createAsyncThunk(
+  'blog/unfavoriteArticle',
+  async (articleInfo) => {
+    const { slug } = articleInfo
+    const token = getCookie('token')
+    console.log('Удалять из избранного. Токен:', token)
+
+    try {
+      const response = await axios.delete(
+        `${API_ROOT_URL}articles/${slug}/favorite`,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+          data: {},
+        },
+      )
+
+      const { data } = response
+      // Если data содержит свойство article, то возвращаем его
+      if (data.article) {
+        console.log('Успешный ответ ЛАЙК:', response.status, data)
+        console.log(data.article)
+        return data.article
+      }
+
+      if (response.status === 200) {
+        // Передаем данные, если запрос выполнен успешно
+        return data
+      }
+      // Обрабатываем ошибочный статус
+      throw new Error(`Ошибка unfavoriteArticle. Статус: ${response.status}`)
+    } catch (error) {
+      console.error('Ошибка unfavoriteArticle:', error)
+      throw error // Повторное возбуждение ошибки для ее перехвата thunk
+    }
+  },
+)
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++
 const initialState = {
@@ -343,6 +423,28 @@ const blog = createSlice({
       .addCase(loginUserFailed, (state, action) => {
         state.error = action.payload.statusText // Обновите ошибку в состоянии
         state.loading = false
+      })
+      .addCase(favoriteArticle.fulfilled, (state, action) => {
+        const updatedArticle = action.payload
+        // Найдите индекс статьи в массиве articles
+        const index = state.posts.findIndex(
+          (article) => article.slug === updatedArticle.slug,
+        )
+        if (index !== -1) {
+          // Обновите статью в массиве articles
+          state.posts[index] = updatedArticle
+        }
+      })
+      .addCase(unfavoriteArticle.fulfilled, (state, action) => {
+        const updatedArticle = action.payload
+        // Найдите индекс статьи в массиве articles
+        const index = state.posts.findIndex(
+          (article) => article.slug === updatedArticle.slug,
+        )
+        if (index !== -1) {
+          // Обновите статью в массиве articles
+          state.posts[index] = updatedArticle
+        }
       })
   },
 })
