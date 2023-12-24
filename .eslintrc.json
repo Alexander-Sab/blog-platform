@@ -23,6 +23,9 @@
   },
   "plugins": ["react", "prettier", "import"],
   "rules": {
+    "implicit-arrow-linebreak": "off",
+    "operator-linebreak": "off",
+    "no-param-reassign": "off",
     "no-undefined": "off", // Добавленное правило
     "prettier/prettier": "error",
     "linebreak-style": [0, "unix"],

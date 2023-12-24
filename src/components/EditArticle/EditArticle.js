@@ -9,6 +9,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 
 import { editArticle, getPosts } from '../../store/blog'
+import LoadingSpinner from '../LoadingSpinner'
 import classes from '../NewArticle/NewArticle.module.scss'
 
 export function EditArticle() {
@@ -41,7 +42,7 @@ export function EditArticle() {
   })
 
   if (!article) {
-    return <div>Loading...</div> // Отображаем загрузку или другой компонент ожидания
+    return <LoadingSpinner />
   }
 
   return (
@@ -69,7 +70,7 @@ export function EditArticle() {
               name="title"
               placeholder="Title"
               {...register('title')}
-              defaultValue={article.title || ''} // Добавляем defaultValue с проверкой на существование article.title
+              defaultValue={article.title || ''}
             />
           </label>
           {errors.title && (
@@ -92,7 +93,7 @@ export function EditArticle() {
               {...register('description')}
               name="description"
               placeholder="Description"
-              defaultValue={article.description || ''} // Добавляем defaultValue с проверкой на существование article.description
+              defaultValue={article.description || ''}
             />
           </label>
           {errors.description && (
@@ -113,7 +114,7 @@ export function EditArticle() {
               {...register('body')}
               name="body"
               placeholder="Text"
-              defaultValue={article.body || ''} // Добавляем defaultValue с проверкой на существование article.body
+              defaultValue={article.body || ''}
             />
           </label>
           {errors.body && (
@@ -122,7 +123,6 @@ export function EditArticle() {
           <ul className={clsx(classes['tags-list'])}>
             {fields.map((item, index) => (
               <li key={item.id} className={clsx(classes['article-form-list'])}>
-                {/* // не отпровляет */}
                 <span
                   className={clsx(classes['article-form-description-Tags'])}
                 >

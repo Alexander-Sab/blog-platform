@@ -6,6 +6,7 @@ import { Popconfirm } from 'antd'
 
 import { deleteArticle, clearCurrentArticle, getPosts } from '../../store/blog'
 import LikeButton from '../LikeButton'
+import LoadingSpinner from '../LoadingSpinner'
 import classes from '../ContentList/ContentList.module.scss'
 
 export function OneArticle() {
@@ -16,9 +17,8 @@ export function OneArticle() {
     (state) => state.blog.user?.user || state.blog.user,
   )
   const token = useSelector(
-    (state) => state.blog.user.token || state.blog.user?.user.token,
+    (state) => state.blog.user?.token || state.blog.user?.user?.token,
   )
-
   const articles = oneArticle.find((item) => item.slug === slug)
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -27,11 +27,10 @@ export function OneArticle() {
     dispatch(getPosts(slug))
   }, [dispatch, slug])
   if (!articles || !articles.slug) {
-    return <div>Статья не найдена</div>
+    return <LoadingSpinner />
   }
 
-  const author = articles.author || {} // Добавляем пустой объект, если author не определен
-
+  const author = articles.author || {}
   const generateFormattedDate = (article) => {
     const { createdAt } = article
     const date = new Date(createdAt)

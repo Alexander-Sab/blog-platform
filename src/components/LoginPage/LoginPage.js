@@ -29,7 +29,7 @@ export function LoginPage() {
     console.log('visible:', visible)
     console.log('loginError:', loginError)
     setVisible(true)
-    // Скрыть уведомление через 3 секунды после отображения
+
     const timer = setTimeout(() => {
       setVisible(false)
     }, 3000)

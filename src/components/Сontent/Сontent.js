@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Pagination, Spin } from 'antd'
+import { Pagination } from 'antd'
 import clsx from 'clsx'
 import { useDispatch, useSelector } from 'react-redux'
 
 import ContentList from '../ContentList'
 import { getPosts } from '../../store/blog'
+import LoadingSpinner from '../LoadingSpinner'
 
 import classes from './Сontent.module.scss'
 
@@ -27,7 +28,7 @@ export function Сontent() {
       .then(() => {
         setTimeout(() => {
           setLoading(false)
-        }, 1000)
+        }, 500)
       })
       .catch((error) => {
         setErrorMessage(error.message)
@@ -36,11 +37,7 @@ export function Сontent() {
   }, [currentPage, dispatch])
 
   if (loading) {
-    return (
-      <div className={clsx(classes.spin, classes.content)}>
-        <Spin />
-      </div>
-    )
+    return <LoadingSpinner />
   }
 
   if (errorMessage) {
