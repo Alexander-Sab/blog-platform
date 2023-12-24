@@ -8,14 +8,21 @@ import getCookie from '../utils/getCookie'
 
 const API_ROOT_URL = 'https://blog.kata.academy/api/'
 
-export const getPosts = createAsyncThunk('blog/getPosts', async (page) => {
-  try {
-    const response = await axios.get(`${API_ROOT_URL}articles?page=${page}`)
-    return response.data
-  } catch (error) {
-    throw new Error('Something goes wrong')
-  }
-})
+export const getPosts = createAsyncThunk(
+  'blog/getPosts',
+  async ({ currentPage, pageSize }) => {
+    try {
+      const response = await axios.get(
+        `${API_ROOT_URL}articles?offset=${
+          (currentPage - 1) * pageSize
+        }&limit=${pageSize}`,
+      )
+      return response.data
+    } catch (error) {
+      throw new Error('Something goes wrong')
+    }
+  },
+)
 
 export const fetchCreateUser = createAsyncThunk(
   'user/fetchCreateUser',

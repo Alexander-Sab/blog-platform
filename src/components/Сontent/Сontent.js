@@ -18,17 +18,16 @@ export function Сontent() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page)
-    dispatch(getPosts(page))
+    dispatch(getPosts({ currentPage: page, pageSize: 5 }))
   }
-  console.log()
 
   useEffect(() => {
     setLoading(true)
-    dispatch(getPosts(currentPage))
+    dispatch(getPosts({ currentPage, pageSize: 5 }))
       .then(() => {
         setTimeout(() => {
           setLoading(false)
-        }, 1000) // Задержка в 5 секунд
+        }, 1000)
       })
       .catch((error) => {
         setErrorMessage(error.message)
@@ -53,23 +52,27 @@ export function Сontent() {
       </div>
     )
   }
+
   const generateArticlesId = (articles) => {
     const { title, createdAt, username } = articles
     const id = `${title}${createdAt}${username}`
     return id
   }
+
   return (
     <section className={clsx(classes.content)}>
       {posts.map((articles) => {
         const ArticlesId = generateArticlesId(articles)
         return <ContentList key={ArticlesId} articles={articles} />
       })}
-      <Pagination
-        className={clsx(classes.pagination)}
-        current={currentPage}
-        total={totalPages} // Умножайте на количество статей на странице
-        onChange={handlePageChange}
-      />
+      <div className={clsx(classes.pagination)}>
+        <Pagination
+          current={currentPage}
+          total={totalPages}
+          pageSize={5}
+          onChange={handlePageChange}
+        />
+      </div>
     </section>
   )
 }
