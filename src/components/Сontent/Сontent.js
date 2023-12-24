@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import ContentList from '../ContentList'
 import { getPosts } from '../../store/blog'
 import LoadingSpinner from '../LoadingSpinner'
+import { PAGE_SIZE } from '../../constants/constants'
+import { generateArticlesId } from '../../utils/utils'
 
 import classes from './Сontent.module.scss'
 
@@ -19,12 +21,12 @@ export function Сontent() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page)
-    dispatch(getPosts({ currentPage: page, pageSize: 5 }))
+    dispatch(getPosts({ currentPage: page, pageSize: PAGE_SIZE }))
   }
 
   useEffect(() => {
     setLoading(true)
-    dispatch(getPosts({ currentPage, pageSize: 5 }))
+    dispatch(getPosts({ currentPage, pageSize: PAGE_SIZE }))
       .then(() => {
         setTimeout(() => {
           setLoading(false)
@@ -50,12 +52,6 @@ export function Сontent() {
     )
   }
 
-  const generateArticlesId = (articles) => {
-    const { title, createdAt, username } = articles
-    const id = `${title}${createdAt}${username}`
-    return id
-  }
-
   return (
     <section className={clsx(classes.content)}>
       {posts.map((articles) => {
@@ -66,7 +62,7 @@ export function Сontent() {
         <Pagination
           current={currentPage}
           total={totalPages}
-          pageSize={5}
+          pageSize={PAGE_SIZE}
           onChange={handlePageChange}
         />
       </div>

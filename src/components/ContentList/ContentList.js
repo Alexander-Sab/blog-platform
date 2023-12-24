@@ -1,29 +1,14 @@
-/* eslint-disable operator-linebreak */
 import ReactMarkdown from 'react-markdown'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 
+import { generateFormattedDate, handleImageError } from '../../utils/utils'
 import LikeButton from '../LikeButton'
 
 import placeholderImage from './humanavatar.svg'
 import classes from './ContentList.module.scss'
 
 export function ContentList({ articles }) {
-  const generateFormattedDate = (article) => {
-    const { createdAt } = article
-    const date = new Date(createdAt)
-    const formattedDate = date.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    })
-    return formattedDate
-  }
-
-  const handleImageError = (e) => {
-    e.target.src = placeholderImage
-  }
-
   return (
     <div className={clsx(classes.contentList)}>
       <div className={clsx(classes['contentList-PostHeader'])}>

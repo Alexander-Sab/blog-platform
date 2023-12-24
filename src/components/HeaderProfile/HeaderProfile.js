@@ -12,7 +12,6 @@ export function HeaderProfile() {
   const userProfile = useSelector(
     (state) => state.blog.user?.user || state.blog.user,
   )
-  console.log('userProfile', userProfile)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 

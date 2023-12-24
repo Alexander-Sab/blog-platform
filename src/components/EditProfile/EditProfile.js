@@ -1,13 +1,9 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/jsx-one-expression-per-line */
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
-// eslint-disable-next-line object-curly-newline
 import { Form, Input, Button } from 'antd'
 import { useForm } from 'react-hook-form'
 
-// import { useDispatch } from 'react-redux'
 import { fetchUpdateUserProfile } from '../../store/blog'
 
 import classes from './EditProfile.module.scss'
@@ -24,7 +20,6 @@ export function UserHat() {
   const user = useSelector((state) => state.blog.user?.user || state.blog.user)
 
   useEffect(() => {
-    // Set form field values on component load
     if (user) {
       form.setFieldsValue({
         username: user.username,
@@ -34,7 +29,7 @@ export function UserHat() {
   }, [form, user])
 
   if (!user) {
-    return null // Return null or another component if user data is not available
+    return null
   }
 
   return (

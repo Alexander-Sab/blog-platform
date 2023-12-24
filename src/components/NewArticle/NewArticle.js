@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
+import { Button } from 'antd'
 
 import {
   createArticle,
@@ -168,12 +169,12 @@ export function NewArticle() {
           >
             Add tag
           </button>
-          <button
+          <Button
             type="submit"
             className={clsx(classes['article-form-button'])}
           >
             Send
-          </button>
+          </Button>
         </form>
       </div>
     </div>

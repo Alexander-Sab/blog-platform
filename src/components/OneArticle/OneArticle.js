@@ -4,6 +4,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { Popconfirm } from 'antd'
 
+import { generateFormattedDate } from '../../utils/utils'
 import { deleteArticle, clearCurrentArticle, getPosts } from '../../store/blog'
 import LikeButton from '../LikeButton'
 import LoadingSpinner from '../LoadingSpinner'
@@ -31,17 +32,6 @@ export function OneArticle() {
   }
 
   const author = articles.author || {}
-  const generateFormattedDate = (article) => {
-    const { createdAt } = article
-    const date = new Date(createdAt)
-    const formattedDate = date.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    })
-
-    return formattedDate
-  }
 
   const handleDelete = () => {
     dispatch(deleteArticle({ slug: articles.slug, token }))

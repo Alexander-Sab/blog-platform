@@ -28,7 +28,6 @@ export function RegisterPage() {
   } = useForm()
 
   const onSubmit = (data) => {
-    console.log('Form data:', data)
     dispatch(fetchCreateUser(data))
       .then(() => {
         dispatch(fetchLoginUser(data))

@@ -16,7 +16,6 @@ export function LoginPage() {
   const loginError = useSelector((state) => state.blog.error)
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  console.log('loginError', loginError)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -26,10 +25,7 @@ export function LoginPage() {
   }, [loggedIn, navigate])
 
   useEffect(() => {
-    console.log('visible:', visible)
-    console.log('loginError:', loginError)
     setVisible(true)
-
     const timer = setTimeout(() => {
       setVisible(false)
     }, 3000)
@@ -41,7 +37,6 @@ export function LoginPage() {
   } = useForm()
 
   const onFinish = (values) => {
-    console.log('Form values:', values)
     dispatch(fetchLoginUser(values))
   }
 

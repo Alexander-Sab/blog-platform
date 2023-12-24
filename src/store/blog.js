@@ -1,20 +1,14 @@
+/* eslint-disable object-curly-newline */
 import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
 
-import getCookie from '../utils/getCookie'
-
-const API_ROOT_URL = 'https://blog.kata.academy/api/'
+import * as api from '../services/api'
 
 export const getPosts = createAsyncThunk(
   'blog/getPosts',
   async ({ currentPage, pageSize }) => {
     try {
-      const response = await axios.get(
-        `${API_ROOT_URL}articles?offset=${
-          (currentPage - 1) * pageSize
-        }&limit=${pageSize}`,
-      )
-      return response.data
+      const response = await api.getPosts({ currentPage, pageSize })
+      return response
     } catch (error) {
       throw new Error('Something goes wrong')
     }
@@ -25,20 +19,8 @@ export const fetchCreateUser = createAsyncThunk(
   'user/fetchCreateUser',
   async ({ username, email, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${API_ROOT_URL}users`,
-        {
-          user: {
-            username,
-            email,
-            password,
-          },
-        },
-        {
-          headers: { 'Content-Type': 'application/json' },
-        },
-      )
-      return response.data
+      const response = await api.createUser({ username, email, password })
+      return response
     } catch (err) {
       return rejectWithValue({
         status: err.response.status,
@@ -61,25 +43,13 @@ export const loginUserFailed = createAction(
   }),
 )
 
-// В вашей thunk-функции
 export const fetchLoginUser = createAsyncThunk(
   'user/fetchLoginUser',
   async ({ email, password }, { rejectWithValue, dispatch }) => {
     try {
-      const response = await axios.post(
-        `${API_ROOT_URL}users/login`,
-        {
-          user: {
-            email,
-            password,
-          },
-        },
-        {
-          headers: { 'Content-Type': 'application/json' },
-        },
-      )
-      console.log('res.data', response.data)
-      return response.data
+      const response = await api.loginUser({ email, password })
+      console.log('res.data', response)
+      return response
     } catch (err) {
       console.log('err.response', err.response)
       dispatch(loginUserFailed(err))
@@ -93,41 +63,26 @@ export const fetchLoginUser = createAsyncThunk(
 )
 
 export const logoutUser = createAction('user/logoutUser')
-export const updateUserProfile = createAction('user/updateUserProfile')
 
-// ========================================================= fetchUpdateUserProfile
+export const updateUserProfile = createAction('user/updateUserProfile')
 
 export const fetchUpdateUserProfile = createAsyncThunk(
   'user/fetchUpdateUserProfile',
-  // eslint-disable-next-line object-curly-newline
   async (
-    // eslint-disable-next-line object-curly-newline
     { username, email, password, image },
     { rejectWithValue, dispatch },
   ) => {
     console.log('Incoming data', username, email, password, image)
-    const requestData = {
-      user: {
+    try {
+      const response = await api.updateUserProfile({
         username,
         email,
         password,
         image,
-      },
-    }
-    const token = getCookie('token')
-    console.log('Token:', token)
-    try {
-      const response = await axios.put(`${API_ROOT_URL}user`, requestData, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${getCookie('token')}`,
-        },
       })
-      console.log('UserProfile', response.data)
-
-      // Обновляем данные пользователя в Redux
-      dispatch(updateUserProfile(response.data.user))
-      return response.data
+      console.log('UserProfile', response)
+      dispatch(updateUserProfile(response.user))
+      return response
     } catch (err) {
       console.log('Error:', err)
       return rejectWithValue({
@@ -139,206 +94,81 @@ export const fetchUpdateUserProfile = createAsyncThunk(
     }
   },
 )
-// ++++++++++ новая статья
+
 export const createArticle = createAsyncThunk(
   'blog/createArticle',
   async (articleInfo) => {
-    const { data } = articleInfo
-    const token = getCookie('token')
-
-    const option = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
-      body: JSON.stringify({
-        article: {
-          title: data.title,
-          description: data.description,
-          body: data.body,
-          tagList: data.tagList,
-        },
-      }),
+    try {
+      const response = await api.createArticle(articleInfo)
+      return response
+    } catch (err) {
+      throw err.response.data.errors.message || 'Error creating article'
     }
-
-    const response = await fetch(
-      'https://blog.kata.academy/api/articles',
-      option,
-    )
-    const body = await response.json()
-
-    console.log(body)
-
-    return body
   },
 )
+
 export const editArticle = createAsyncThunk(
   'blog/editArticle',
   async (articleInfo) => {
-    const { data, slug } = articleInfo
-    const token = getCookie('token')
-
-    const option = {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
-      body: JSON.stringify({
-        article: {
-          title: data.title,
-          description: data.description,
-          body: data.body,
-          tagList: data.tagList,
-        },
-      }),
+    try {
+      const response = await api.editArticle(articleInfo)
+      return response
+    } catch (err) {
+      throw err.response.data.errors.message || 'Error editing article'
     }
-
-    const response = await fetch(
-      `https://blog.kata.academy/api/articles/${slug}`,
-      option,
-    )
-
-    const body = await response.json()
-
-    console.log(body)
-
-    return body
   },
 )
+
 export const fetchPostData = createAsyncThunk(
   'blog/fetchPostData',
   async (pageInfo) => {
-    let { token } = pageInfo
-    const { currentPage } = pageInfo
-    let option = null
-    if (sessionStorage.getItem('token')) {
-      token = sessionStorage.getItem('token')
+    try {
+      const response = await api.fetchPostData(pageInfo)
+      return response
+    } catch (err) {
+      throw new Error('Error fetching article data')
     }
-    if (token) {
-      option = {
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-      }
-    }
-    const response = await fetch(
-      `https://blog.kata.academy/api/articles?offset=${currentPage * 20 - 20}`,
-      option,
-    )
-    const data = await response.json()
-    console.log(data)
-    return data
   },
 )
-//  удаление статьи ++++++++++++++++++++++++++++++++
 
 export const deleteArticle = createAsyncThunk(
   'blog/deleteArticle',
   async (articleInfo) => {
-    const { token, slug } = articleInfo
-
-    const option = {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Token ${token}`,
-      },
+    try {
+      const response = await api.deleteArticle(articleInfo)
+      return response
+    } catch (err) {
+      throw new Error('Error deleting article')
     }
-
-    const response = await fetch(
-      `https://blog.kata.academy/api/articles/${slug}`,
-      option,
-    )
-    const data = await response.json()
-
-    console.log(data)
-
-    return data
   },
 )
-// лайки
-
-// поставить лайк
 
 export const favoriteArticle = createAsyncThunk(
   'blog/favoriteArticle',
   async (articleInfo) => {
-    const { slug } = articleInfo
-    const token = getCookie('token')
-
     try {
-      const response = await axios.post(
-        `${API_ROOT_URL}articles/${slug}/favorite`,
-        null,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        },
-      )
-
-      const { data } = response
-
-      // Если data содержит свойство article, то возвращаем его
-      if (data.article) {
-        console.log('Успешный ответ ЛАЙК:', response.status, data)
-        console.log(data.article)
-        return data.article
-      }
-
-      // В противном случае возвращаем весь объект data
-      console.log('Успешный ответ ЛАЙК:', response.status, data)
-      console.log(data)
-      return data
+      const response = await api.favoriteArticle(articleInfo)
+      return response
     } catch (error) {
-      // Обрабатываем ошибку
-      console.error('Ошибка запроса ЛАЙК:', error)
+      console.error('Error favoriting article:', error)
       throw error
     }
   },
 )
-// удалить лайк
+
 export const unfavoriteArticle = createAsyncThunk(
   'blog/unfavoriteArticle',
   async (articleInfo) => {
-    const { slug } = articleInfo
-    const token = getCookie('token')
-    console.log('Удалять из избранного. Токен:', token)
-
     try {
-      const response = await axios.delete(
-        `${API_ROOT_URL}articles/${slug}/favorite`,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-          data: {},
-        },
-      )
-
-      const { data } = response
-      // Если data содержит свойство article, то возвращаем его
-      if (data.article) {
-        console.log('Успешный ответ ЛАЙК:', response.status, data)
-        console.log(data.article)
-        return data.article
-      }
-
-      if (response.status === 200) {
-        // Передаем данные, если запрос выполнен успешно
-        return data
-      }
-      // Обрабатываем ошибочный статус
-      throw new Error(`Ошибка unfavoriteArticle. Статус: ${response.status}`)
+      const response = await api.unfavoriteArticle(articleInfo)
+      return response
     } catch (error) {
-      console.error('Ошибка unfavoriteArticle:', error)
-      throw error // Повторное возбуждение ошибки для ее перехвата thunk
+      console.error('UnfavoriteArticle error:', error)
+      throw error
     }
   },
 )
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++
 const initialState = {
   posts: [],
   page: 1,
@@ -350,6 +180,7 @@ const initialState = {
   error: '',
   loggedIn: localStorage.getItem('loggedIn') === 'true',
 }
+
 const blog = createSlice({
   name: 'blog',
   initialState,
@@ -398,7 +229,6 @@ const blog = createSlice({
         }
         state.loggedIn = true
         state.user = formattedUser
-
         state.user = action.payload.user
       })
       .addCase(fetchCreateUser.rejected, (state) => {
@@ -417,36 +247,31 @@ const blog = createSlice({
         console.log('Профиль пользователя обновлен')
         console.log('action.payload:', action.payload)
         localStorage.setItem('user', JSON.stringify(action.payload.user))
-        // Обновляем данные пользователя в Redux
 
         return {
           ...state,
-          user: action.payload.user, // Обновление данных в Redux
+          user: action.payload.user,
         }
       })
       .addCase(loginUserFailed, (state, action) => {
-        state.error = action.payload.statusText // Обновите ошибку в состоянии
+        state.error = action.payload.statusText
         state.loading = false
       })
       .addCase(favoriteArticle.fulfilled, (state, action) => {
         const updatedArticle = action.payload
-        // Найдите индекс статьи в массиве articles
         const index = state.posts.findIndex(
           (article) => article.slug === updatedArticle.slug,
         )
         if (index !== -1) {
-          // Обновите статью в массиве articles
           state.posts[index] = updatedArticle
         }
       })
       .addCase(unfavoriteArticle.fulfilled, (state, action) => {
         const updatedArticle = action.payload
-        // Найдите индекс статьи в массиве articles
         const index = state.posts.findIndex(
           (article) => article.slug === updatedArticle.slug,
         )
         if (index !== -1) {
-          // Обновите статью в массиве articles
           state.posts[index] = updatedArticle
         }
       })
