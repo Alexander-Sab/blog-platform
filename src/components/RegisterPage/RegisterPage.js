@@ -1,46 +1,55 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import clsx from 'clsx'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 // eslint-disable-next-line object-curly-newline
-import { Form, Input, Button, Checkbox } from 'antd'
+import { Form, Input, Button, Checkbox, Alert } from 'antd'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
-import { fetchCreateUser, fetchLoginUser } from '../../store/blog'
+import { fetchCreateUser } from '../../store/blog'
 
 import classes from './RegisterPage.module.scss'
 
 export function RegisterPage() {
-  const loggedIn = useSelector((state) => state.blog.loggedIn)
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if (loggedIn) {
-      navigate('/articles')
-    }
-  }, [loggedIn, navigate])
-
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const loggedIn = useSelector((state) => state.blog.loggedIn)
+  const loginError = useSelector((state) => state.blog.error)
+  const [visible, setVisible] = useState(false)
   const {
     formState: { errors, isSubmitting },
-    watch,
   } = useForm()
 
   const onSubmit = (data) => {
-    dispatch(fetchCreateUser(data))
-      .then(() => {
-        dispatch(fetchLoginUser(data))
-        navigate('/articles')
-      })
-      .catch((error) => {
-        console.log('Registration error:', error)
-      })
+    dispatch(fetchCreateUser(data)).then(() => {})
   }
+
+  useEffect(() => {
+    if (loggedIn) {
+      if (loginError) {
+        console.error('2loginError', loginError)
+      } else {
+        console.log('Navigating to /articles')
+        navigate('/articles')
+      }
+    }
+  }, [loggedIn, loginError, navigate])
+
+  useEffect(() => {
+    setVisible(true)
+    const timer = setTimeout(() => {
+      setVisible(false)
+    }, 3000)
+    return () => clearTimeout(timer)
+  }, [loginError])
 
   return (
     <section className={clsx(classes.UserForm)}>
       <h3 className={clsx(classes['UserForm-header'])}>Create new account</h3>
+      {visible && loginError && (
+        <Alert message="user/password already exists!" type="error" showIcon />
+      )}
       <Form onFinish={onSubmit} errors={errors} validateTrigger="onBlur">
         <Form.Item
           name="username"
@@ -107,14 +116,17 @@ export function RegisterPage() {
               required: true,
               message: 'Repeat password is required',
             },
-            {
-              validate: (value) =>
-                // eslint-disable-next-line implicit-arrow-linebreak
-                value === watch('password') || 'Passwords do not match',
-            },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve()
+                }
+                return Promise.reject(new Error('Passwords do not match'))
+              },
+            }),
           ]}
         >
-          <Input.Password placeholder="Password" />
+          <Input.Password placeholder="Repeat Password" />
         </Form.Item>
         <Form.Item
           name="agreement"

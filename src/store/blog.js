@@ -48,10 +48,8 @@ export const fetchLoginUser = createAsyncThunk(
   async ({ email, password }, { rejectWithValue, dispatch }) => {
     try {
       const response = await api.loginUser({ email, password })
-      console.log('res.data', response)
       return response
     } catch (err) {
-      console.log('err.response', err.response)
       dispatch(loginUserFailed(err))
       return rejectWithValue({
         status: err.response?.status || 500,
@@ -72,7 +70,6 @@ export const fetchUpdateUserProfile = createAsyncThunk(
     { username, email, password, image },
     { rejectWithValue, dispatch },
   ) => {
-    console.log('Incoming data', username, email, password, image)
     try {
       const response = await api.updateUserProfile({
         username,
@@ -80,11 +77,9 @@ export const fetchUpdateUserProfile = createAsyncThunk(
         password,
         image,
       })
-      console.log('UserProfile', response)
       dispatch(updateUserProfile(response.user))
       return response
     } catch (err) {
-      console.log('Error:', err)
       return rejectWithValue({
         status: err.response.status,
         statusText:
@@ -216,25 +211,26 @@ const blog = createSlice({
         state.loading = false
       })
       .addCase(fetchLoginUser.fulfilled, (state, action) => {
-        console.log('Пользователь залогинился')
-        localStorage.setItem('loggedIn', 'true')
-        localStorage.setItem('user', JSON.stringify(action.payload))
-        document.cookie = `token=${action.payload.user.token}`
-        const formattedUser = {
-          ...action.payload.user,
-          username: action.payload.username
-            ? action.payload.username.charAt(0).toUpperCase() +
-              action.payload.username.slice(1)
-            : '',
+        if (!state.error) {
+          localStorage.setItem('loggedIn', 'true')
+          localStorage.setItem('user', JSON.stringify(action.payload))
+          document.cookie = `token=${action.payload.user.token}`
+          const formattedUser = {
+            ...action.payload.user,
+            username: action.payload.username
+              ? action.payload.username.charAt(0).toUpperCase() +
+                action.payload.username.slice(1)
+              : '',
+          }
+          state.loggedIn = true
+          state.user = formattedUser
+          state.user = action.payload.user
         }
-        state.loggedIn = true
-        state.user = formattedUser
-        state.user = action.payload.user
       })
-      .addCase(fetchCreateUser.rejected, (state) => {
-        console.log('Ошибка при выполнении запроса')
+      .addCase(fetchCreateUser.rejected, (state, action) => {
         state.loggedIn = false
         state.user = {}
+        state.error = action.error.message
       })
       .addCase(logoutUser, (state) => {
         localStorage.removeItem('loggedIn')
@@ -244,8 +240,6 @@ const blog = createSlice({
         return { ...state, loggedIn: false, user: {} }
       })
       .addCase(fetchUpdateUserProfile.fulfilled, (state, action) => {
-        console.log('Профиль пользователя обновлен')
-        console.log('action.payload:', action.payload)
         localStorage.setItem('user', JSON.stringify(action.payload.user))
 
         return {

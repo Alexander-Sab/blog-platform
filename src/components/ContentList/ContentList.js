@@ -1,14 +1,19 @@
+/* eslint-disable operator-linebreak */
 import ReactMarkdown from 'react-markdown'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 
-import { generateFormattedDate, handleImageError } from '../../utils/utils'
+import { generateFormattedDate } from '../../utils/utils'
 import LikeButton from '../LikeButton'
 
 import placeholderImage from './humanavatar.svg'
 import classes from './ContentList.module.scss'
 
 export function ContentList({ articles }) {
+  const handleImageError = (e) => {
+    e.target.src = placeholderImage
+  }
+  const avatarSrc = articles.author.image || placeholderImage
   return (
     <div className={clsx(classes.contentList)}>
       <div className={clsx(classes['contentList-PostHeader'])}>
@@ -62,14 +67,14 @@ export function ContentList({ articles }) {
                   classes['contentList-PostHeader___sidebar-author-info-date'],
                 )}
               >
-                {generateFormattedDate(articles)}
+                {generateFormattedDate(articles.createdAt)}
               </div>
             </div>
             <img
               className={clsx(
                 classes['contentList-PostHeader___sidebar-avatar'],
               )}
-              src={articles.author.image || placeholderImage}
+              src={avatarSrc}
               alt="avatar"
               onError={handleImageError}
             />

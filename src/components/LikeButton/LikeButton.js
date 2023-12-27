@@ -1,6 +1,6 @@
 /* eslint-disable operator-linebreak */
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
 import { Alert } from 'antd'
@@ -25,13 +25,8 @@ export function LikeButton({ article }) {
   const currentUser = useSelector(
     (state) => state.blog.user?.user || state.blog.user,
   )
-  const [isFavorited, setIsFavorited] = useState(false)
+  const [isFavorited, setIsFavorited] = useState(article.favorited)
   const [showWarning, setShowWarning] = useState(false)
-
-  useEffect(() => {
-    const storedIsFavorited = localStorage.getItem(article.slug)
-    setIsFavorited(storedIsFavorited === 'true')
-  }, [article.slug])
 
   const handleLike = async () => {
     if (!currentUser || !currentUser.token) {
@@ -44,23 +39,25 @@ export function LikeButton({ article }) {
       return
     }
 
-    setIsFavorited(!isFavorited)
-    setShowWarning(false)
-
-    const token =
-      currentUser.token || (currentUser.user && currentUser.user.token)
-
     try {
       if (isFavorited) {
-        await dispatch(unfavoriteArticle({ token, slug: article.slug }))
+        await dispatch(
+          unfavoriteArticle({ token: currentUser.token, slug: article.slug }),
+        )
       } else {
-        await dispatch(favoriteArticle({ token, slug: article.slug }))
+        await dispatch(
+          favoriteArticle({ token: currentUser.token, slug: article.slug }),
+        )
       }
-      localStorage.setItem(article.slug, !isFavorited)
+
+      // Обновляем статью после успешного выполнения запроса
+      // Вам, возможно, придется обновить статью снова после загрузки данных с сервера
+      setIsFavorited(!isFavorited)
     } catch (error) {
       console.error('Error handling like:', error)
     }
   }
+
   return (
     <>
       {showWarning && <WarningMessage />}
@@ -75,7 +72,7 @@ export function LikeButton({ article }) {
           },
         )}
       >
-        {isFavorited ? (
+        {article.favoritesCount > 0 ? (
           <svg
             className={clsx(
               classes['contentList-PostHeader___content-like-button-redHeart'],

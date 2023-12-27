@@ -68,13 +68,16 @@
 }
 .header-actions__profile-user {
     display: flex;
-    align-items: center;
-    font-family: 'Inter', sans-serif;
+    align-items: center; 
+    font-family: Inter;
     font-size: 18px;
+    font-weight: 400;
     line-height: 28px;
     letter-spacing: 0em;
-    text-align: center;
-    text-decoration: none;
+    text-align: left;
+    color: #000000D9;
+    margin-right: 5px;
+    
     
 }
 

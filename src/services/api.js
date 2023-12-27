@@ -37,7 +37,14 @@ export const createUser = async ({ username, email, password }) => {
     )
     return response.data
   } catch (err) {
-    throw err.response.data.errors.message || 'Invalid data. Check your fields!'
+    if (err.response && err.response.status === 422) {
+      // Ошибка 422 обычно означает, что пользователь уже существует
+      throw new Error('User with this username or email already exists')
+    } else {
+      throw (
+        err.response.data.errors.message || 'Invalid data. Check your fields!'
+      )
+    }
   }
 }
 
@@ -57,7 +64,8 @@ export const loginUser = async ({ email, password }) => {
     )
     return response.data
   } catch (err) {
-    throw err.response.data.errors.message || 'Invalid email or password'
+    console.error('Ошибка входа:', err)
+    throw err.response?.data?.errors?.message || 'Неверный email или пароль'
   }
 }
 

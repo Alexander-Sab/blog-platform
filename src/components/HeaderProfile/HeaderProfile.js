@@ -4,8 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { logoutUser, updateUserProfile } from '../../store/blog'
-import placeholderImage from '../ContentList/humanavatar.svg'
 
+import placeholderImage from './humanavatar.svg'
 import classes from './HeaderProfile.module.scss'
 
 export function HeaderProfile() {
@@ -16,9 +16,7 @@ export function HeaderProfile() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Переносим обновление данных пользователя в хук useEffect
     if (userProfile) {
-      // Используем dispatch напрямую для обновления данных пользователя
       dispatch(updateUserProfile(userProfile))
     }
   }, [dispatch, userProfile])

@@ -61,7 +61,7 @@ export function Сontent() {
       <div className={clsx(classes.pagination)}>
         <Pagination
           current={currentPage}
-          total={totalPages}
+          total={5 * totalPages}
           pageSize={PAGE_SIZE}
           onChange={handlePageChange}
         />

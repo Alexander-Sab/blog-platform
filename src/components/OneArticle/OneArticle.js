@@ -1,5 +1,6 @@
 import clsx from 'clsx'
 import React, { useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { Popconfirm } from 'antd'
@@ -9,6 +10,7 @@ import { deleteArticle, clearCurrentArticle, getPosts } from '../../store/blog'
 import LikeButton from '../LikeButton'
 import LoadingSpinner from '../LoadingSpinner'
 import classes from '../ContentList/ContentList.module.scss'
+import placeholderImage from '../ContentList/humanavatar.svg'
 
 export function OneArticle() {
   const { slug } = useParams()
@@ -38,6 +40,11 @@ export function OneArticle() {
     dispatch(clearCurrentArticle())
     navigate('/articles')
   }
+
+  const handleImageError = (e) => {
+    e.target.src = placeholderImage
+  }
+  const avatarSrc = author.image || placeholderImage
 
   return (
     <section className={clsx(classes.content)}>
@@ -90,7 +97,7 @@ export function OneArticle() {
             <div
               className={clsx(classes['contentList-PostHeader___content-body'])}
             >
-              {articles.body}
+              <ReactMarkdown>{articles.body}</ReactMarkdown>
             </div>
           </div>
           <div className={clsx(classes['contentList-PostHeader___sidebar'])}>
@@ -105,7 +112,6 @@ export function OneArticle() {
                 )}
               >
                 {author.username}
-                {/* Добавляем проверку на существование username */}
                 <div
                   className={clsx(
                     classes[
@@ -113,15 +119,16 @@ export function OneArticle() {
                     ],
                   )}
                 >
-                  {generateFormattedDate(articles)}
+                  {generateFormattedDate(articles.createdAt)}
                 </div>
               </div>
               <img
                 className={clsx(
                   classes['contentList-PostHeader___sidebar-avatar'],
                 )}
-                src={author.image}
+                src={avatarSrc}
                 alt="avatar"
+                onError={handleImageError}
               />
             </div>
             {loggedIn && currentUser.username === author.username && (

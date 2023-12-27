@@ -4,6 +4,7 @@ import {
   Route,
   Routes,
   useLocation,
+  Navigate,
 } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import clsx from 'clsx'
@@ -17,38 +18,55 @@ import EditProfile from '../EditProfile'
 import HeaderProfile from '../HeaderProfile'
 import NewArticle from '../NewArticle'
 import EditArticle from '../EditArticle'
+import { PATH } from '../../constants/constants'
 
 import classes from './App.module.scss'
 
 export function App() {
+  const loggedIn = useSelector((state) => state.blog.loggedIn)
+
   const HeaderOrHeaderProfile = React.memo(() => {
     const location = useLocation()
-    const isEditProfilePage = location.pathname === '/profile'
-    const isArticlesPage = location.pathname.startsWith('/articles')
-    const isCreateArticlePage = location.pathname === '/new-article'
-    const loggedIn = useSelector((state) => state.blog.loggedIn)
+    const isEditProfilePage = location.pathname === PATH.PROFILE
+    const isArticlesPage = location.pathname.startsWith(PATH.ARTICLES)
+    const isCreateArticlePage = location.pathname === PATH.NEW_ARTICLE
+    const isLoggedIn = loggedIn
 
-    if (loggedIn && isEditProfilePage) {
+    if (isLoggedIn && isEditProfilePage) {
       return <HeaderProfile />
     }
-    if (loggedIn && (isArticlesPage || isCreateArticlePage)) {
+    if (isLoggedIn && (isArticlesPage || isCreateArticlePage)) {
       return <HeaderProfile />
     }
     return <Header />
   })
+
   return (
     <Router>
       <div className={clsx(classes.App)}>
         <HeaderOrHeaderProfile />
         <Routes>
-          <Route path="/" element={<Сontent />} />
-          <Route path="/articles" element={<Сontent />} />
-          <Route path="/articles/:slug" element={<OneArticle />} />
-          <Route path="/signup" element={<RegisterPage />} />
-          <Route path="/signin" element={<LoginPage />} />
-          <Route path="/profile" element={<EditProfile />} />
-          <Route path="/new-article" element={<NewArticle />} />
-          <Route path="/articles/:slug/edit" element={<EditArticle />} />
+          <Route path={PATH.ROOT} element={<Сontent />} />
+          <Route path={PATH.ARTICLES} element={<Сontent />} />
+          <Route path={PATH.ARTICLE_BY_SLUG} element={<OneArticle />} />
+          <Route path={PATH.SIGN_UP} element={<RegisterPage />} />
+          <Route path={PATH.SIGN_IN} element={<LoginPage />} />
+          <Route
+            path={PATH.PROFILE}
+            element={
+              loggedIn ? <EditProfile /> : <Navigate to={PATH.SIGN_IN} />
+            }
+          />
+          <Route
+            path={PATH.NEW_ARTICLE}
+            element={loggedIn ? <NewArticle /> : <Navigate to={PATH.SIGN_IN} />}
+          />
+          <Route
+            path={PATH.EDIT_ARTICLE}
+            element={
+              loggedIn ? <EditArticle /> : <Navigate to={PATH.SIGN_IN} />
+            }
+          />
         </Routes>
       </div>
     </Router>

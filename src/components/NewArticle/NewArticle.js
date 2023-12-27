@@ -6,7 +6,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Button } from 'antd'
 
 import {
   createArticle,
@@ -49,7 +48,7 @@ export function NewArticle() {
 
   const submitForm = (data) => {
     try {
-      console.log(data)
+      // console.log(data)
       if (slug) {
         dispatch(editArticle({ data, apiKey, slug }))
         dispatch(clearCurrentArticle())
@@ -139,7 +138,6 @@ export function NewArticle() {
           <ul className={clsx(classes['tags-list'])}>
             {fields.map((item, index) => (
               <li key={item.id} className={clsx(classes['article-form-list'])}>
-                {/* // не отпровляет */}
                 <span
                   className={clsx(classes['article-form-description-Tags'])}
                 >
@@ -169,12 +167,12 @@ export function NewArticle() {
           >
             Add tag
           </button>
-          <Button
+          <button
             type="submit"
             className={clsx(classes['article-form-button'])}
           >
             Send
-          </Button>
+          </button>
         </form>
       </div>
     </div>

@@ -25,8 +25,9 @@
 
 .contentList-PostHeader___content-title-link {
     text-decoration: none;
-    font-family: Inter UI;
+    font-family: Inter;
     font-size: 20px;
+    font-weight: 400;
     line-height: 28px;
     letter-spacing: 0em;
     text-align: left;
@@ -50,12 +51,6 @@
     padding: 8px 16px;
     border: 1px solid;
     border-radius: 4px;
-    font-size: 14px;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    color: #333;
-    cursor: pointer;
     font-family: Inter;
     font-size: 12px;
     font-weight: 400;
@@ -65,19 +60,33 @@
 
   }
   
-  .contentList-PostHeader___content-tags-tag:hover {
-    background-color: #ccc;
+  .contentList-PostHeader___content-description {
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 22px;
+    letter-spacing: 0px;
+    text-align: left;
   }
   
-  .contentList-PostHeader___content-tags-tag:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px #0000ff;
+  .contentList-PostHeader___content-body {
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 22px;
+    letter-spacing: 0px;
+    text-align: left;
   }
 
 .contentList-PostHeader___sidebar-author {
-    width: 141px;
-    height: 46px;
-    display: flex;
+  align-items: center;
+  display: flex;
+  flex-basis: 25%;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 12px;
+  justify-content: flex-end;
+   
 }
 
 .contentList-PostHeader___sidebar-author-info {
@@ -91,8 +100,10 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-
+    
 }
+
+
 .contentList-PostHeader___sidebar-author-info-date {
     font-family: Inter UI;
     font-size: 12px;
@@ -100,7 +111,7 @@
     letter-spacing: 0px;    
     text-align: left;
     color: rgba(0, 0, 0, 0.5);
-    margin-right: 12px;
+    
     white-space: nowrap;
 }
 
@@ -111,7 +122,8 @@
   background-repeat: no-repeat;
   background-position: center;
   background-size: 40px;
-  flex-shrink: 0;
+  flex-shrink: 0; 
+  
 }
 
 .contentList-PostHeader___sidebar-buttones {
