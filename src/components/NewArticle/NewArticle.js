@@ -46,17 +46,18 @@ export function NewArticle() {
     name: 'tagList',
   })
 
-  const submitForm = (data) => {
+  const submitForm = async (data) => {
     try {
-      // console.log(data)
       if (slug) {
-        dispatch(editArticle({ data, apiKey, slug }))
-        dispatch(clearCurrentArticle())
-        dispatch(fetchPostData(currentPage))
+        await dispatch(editArticle({ data, apiKey, slug }))
       } else {
-        dispatch(createArticle({ data, apiKey }))
-        dispatch(fetchPostData(currentPage))
+        await dispatch(createArticle({ data, apiKey }))
       }
+
+      dispatch(clearCurrentArticle())
+      // Обновление списка статей после создания/редактирования
+      dispatch(fetchPostData(currentPage))
+
       reset()
       navigate('/articles')
     } catch (err) {

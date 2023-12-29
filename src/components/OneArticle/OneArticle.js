@@ -6,7 +6,12 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Popconfirm } from 'antd'
 
 import { generateFormattedDate } from '../../utils/utils'
-import { deleteArticle, clearCurrentArticle, getPosts } from '../../store/blog'
+import {
+  deleteArticle,
+  clearCurrentArticle,
+  getPosts,
+  fetchPostData,
+} from '../../store/blog'
 import LikeButton from '../LikeButton'
 import LoadingSpinner from '../LoadingSpinner'
 import classes from '../ContentList/ContentList.module.scss'
@@ -38,6 +43,10 @@ export function OneArticle() {
   const handleDelete = () => {
     dispatch(deleteArticle({ slug: articles.slug, token }))
     dispatch(clearCurrentArticle())
+
+    // Обновление списка статей после удаления
+    dispatch(fetchPostData())
+
     navigate('/articles')
   }
 

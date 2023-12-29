@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 
-import { editArticle, getPosts } from '../../store/blog'
+import { editArticle, getPosts, fetchPostData } from '../../store/blog'
 import LoadingSpinner from '../LoadingSpinner'
 import classes from '../NewArticle/NewArticle.module.scss'
 
@@ -33,6 +33,7 @@ export function EditArticle() {
 
   const submitForm = (data) => {
     dispatch(editArticle({ slug, data }))
+    dispatch(fetchPostData())
     navigate(`/articles/${slug}`)
   }
 

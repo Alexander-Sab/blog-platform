@@ -2,6 +2,7 @@
 import ReactMarkdown from 'react-markdown'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
+import uniqid from 'uniqid'
 
 import { generateFormattedDate } from '../../utils/utils'
 import LikeButton from '../LikeButton'
@@ -36,13 +37,20 @@ export function ContentList({ articles }) {
             </div>
           </div>
           {articles.tagList && articles.tagList.length > 0 && (
-            <span
-              className={clsx(
-                classes['contentList-PostHeader___content-tags-tag'],
-              )}
+            <div
+              className={clsx(classes['contentList-PostHeader___content-tags'])}
             >
-              {articles.tagList}
-            </span>
+              {articles.tagList.map((tag) => (
+                <span
+                  key={uniqid()}
+                  className={clsx(
+                    classes['contentList-PostHeader___content-tags-tag'],
+                  )}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
           )}
           <div
             className={clsx(

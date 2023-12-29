@@ -1,11 +1,14 @@
 /* eslint-disable operator-linebreak */
-
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from 'clsx'
 import { Alert } from 'antd'
 
-import { favoriteArticle, unfavoriteArticle } from '../../store/blog'
+import {
+  favoriteArticle,
+  unfavoriteArticle,
+  // logoutUser,
+} from '../../store/blog'
 
 import classes from './LikeButton.module.scss'
 
@@ -27,15 +30,18 @@ export function LikeButton({ article }) {
   )
   const [isFavorited, setIsFavorited] = useState(article.favorited)
   const [showWarning, setShowWarning] = useState(false)
+  console.log('isFavorited', isFavorited)
+
+  useEffect(() => {
+    setIsFavorited(article.favorited)
+  }, [article.favorited])
 
   const handleLike = async () => {
     if (!currentUser || !currentUser.token) {
       setShowWarning(true)
-
       setTimeout(() => {
         setShowWarning(false)
       }, 1000)
-
       return
     }
 
@@ -49,10 +55,8 @@ export function LikeButton({ article }) {
           favoriteArticle({ token: currentUser.token, slug: article.slug }),
         )
       }
-
-      // Обновляем статью после успешного выполнения запроса
-      // Вам, возможно, придется обновить статью снова после загрузки данных с сервера
-      setIsFavorited(!isFavorited)
+      // Используйте колбэк внутри setIsFavorited для гарантированного обновления значения
+      setIsFavorited((prevIsFavorited) => !prevIsFavorited)
     } catch (error) {
       console.error('Error handling like:', error)
     }
@@ -72,7 +76,7 @@ export function LikeButton({ article }) {
           },
         )}
       >
-        {article.favoritesCount > 0 ? (
+        {isFavorited ? (
           <svg
             className={clsx(
               classes['contentList-PostHeader___content-like-button-redHeart'],
