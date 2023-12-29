@@ -8,12 +8,20 @@ import {
 } from '../constants/constants'
 
 export const getPosts = async ({ currentPage, pageSize }) => {
+  const token = getCookie('token')
   try {
     const response = await axios.get(
       `${API_ROOT_URL}articles?offset=${
         (currentPage - 1) * pageSize
       }&limit=${pageSize}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${token}`,
+        },
+      },
     )
+
     return response.data
   } catch (error) {
     throw new Error('Something went wrong')

@@ -56,7 +56,7 @@ export function LikeButton({ article }) {
         )
       }
       // Используйте колбэк внутри setIsFavorited для гарантированного обновления значения
-      setIsFavorited((prevIsFavorited) => !prevIsFavorited)
+      setIsFavorited(!isFavorited)
     } catch (error) {
       console.error('Error handling like:', error)
     }
